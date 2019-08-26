@@ -4,7 +4,7 @@
   "type": "flogo:activity",
   "title": "Tibco Legacy Collection API",
   "description": "Tibco Legacy Collection",
-  "ref": "github.com/wcn00/flogo/tibcollection/activity/tibcollection",
+  "ref": "github.com/wcn00/tibcollection/activity/tibcollection",
   "author": "Wendell Nichols <wnichols@tibco.com>",
   "settings":[
     {
