@@ -2,6 +2,7 @@ package tibcollection
 
 import (
 	"fmt"
+	"reflect"
 	"sync"
 
 	"github.com/TIBCOSoftware/flogo-lib/core/activity"
@@ -48,6 +49,24 @@ func (myActivity *MyActivity) Metadata() *activity.Metadata {
 	return myActivity.metadata
 }
 
+func IsZero(v interface{}) bool {
+	switch reflect.TypeOf(v).Kind() {
+	case reflect.Array, reflect.String:
+		return len(v.([]interface{})) == 0
+	case reflect.Bool:
+		return v.(bool)
+	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+		return v.(int) == 0
+	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Uintptr:
+		return v.(uint) == 0
+	case reflect.Float32, reflect.Float64:
+		return v.(float32) == 0
+	case reflect.Interface, reflect.Map, reflect.Ptr, reflect.Slice:
+		return false //v.IsNil()
+	}
+	return false
+}
+
 var collectionCacheMutex sync.Mutex
 
 // Eval implements activity.Activity.Eval
@@ -70,7 +89,7 @@ func (myActivity *MyActivity) Eval(context activity.Context) (done bool, err err
 				return false, fmt.Errorf("Append with no key failed to create dynamic key for reason [%s]", err)
 			}
 		}
-		if obj != nil {
+		if obj != nil && !reflect.ValueOf(obj).IsNil() { // len(obj.(map[string]interface{})) > 0 {
 			col.colmap[key.(string)] = append(col.colmap[key.(string)], obj)
 		}
 
@@ -101,8 +120,6 @@ func (myActivity *MyActivity) Eval(context activity.Context) (done bool, err err
 	default:
 		return false, fmt.Errorf("Get operation called with invalid operation [%s]", op)
 	}
-
-	return true, nil
 }
 
 func (myActivity *MyActivity) newKey() (res string, err error) {

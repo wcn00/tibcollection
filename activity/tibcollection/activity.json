@@ -24,7 +24,7 @@
     },
     {
       "name": "object",
-      "type": "any",
+      "type": "object",
       "description":"A member of the object typical of this collection.  Provided with the append operation and will be added to the collection."
     }
   ],
@@ -41,7 +41,7 @@
     },
     {
       "name": "collection",
-      "type": "any",
+      "type": "array",
       "description":"An array of objects typical of this collection"
     }
   ]

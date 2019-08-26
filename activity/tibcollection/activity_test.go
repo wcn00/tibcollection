@@ -111,7 +111,7 @@ func TestEvalEndToEnd(t *testing.T) {
 	}
 
 	//Append an obj
-	tc.SetInput(OBJ, getObj)
+	tc.SetInput(OBJ, getObj())
 	tc.SetInput(KEY, key)
 	ok, err = act.Eval(tc)
 	assert.Nil(t, err)
@@ -133,7 +133,7 @@ func TestEvalEndToEnd(t *testing.T) {
 	}
 
 	//Append second obj
-	tc.SetInput(OBJ, getObj)
+	tc.SetInput(OBJ, getObj())
 	tc.SetInput(KEY, key)
 	ok, err = act.Eval(tc)
 	assert.Nil(t, err)
