@@ -1,0 +1,319 @@
+{
+    "imports": [
+        "github.com/project-flogo/flow",
+        "github.com/wcn00/tibcollection/activity/tibcollection",
+        "git.tibco.com/git/product/ipaas/wi-contrib.git/contributions/General/activity/mapper",
+        "git.tibco.com/git/product/ipaas/wi-contrib.git/contributions/General/activity/log",
+        "github.com/project-flogo/contrib/activity/actreturn",
+        "git.tibco.com/git/product/ipaas/wi-contrib.git/contributions/General/trigger/rest",
+        "github.com/project-flogo/contrib/function/coerce",
+        "github.com/project-flogo/contrib/function/array"
+    ],
+    "name": "TibCollection",
+    "description": " ",
+    "version": "1.1.0",
+    "type": "flogo:app",
+    "appModel": "1.1.1",
+    "feVersion": "2.7.0",
+    "triggers": [
+        {
+            "ref": "#rest",
+            "name": "tibco-wi-rest",
+            "description": "Simple REST Trigger",
+            "settings": {
+                "port": 4343,
+                "secureConnection": false,
+                "serverKey": "",
+                "caCertificate": "",
+                "swagger": ""
+            },
+            "id": "ReceiveHTTPMessage",
+            "handlers": [
+                {
+                    "description": "",
+                    "settings": {
+                        "Method": "POST",
+                        "Path": "/testcollection",
+                        "OutputValidation": false
+                    },
+                    "action": {
+                        "ref": "github.com/project-flogo/flow",
+                        "settings": {
+                            "flowURI": "res://flow:TestTibCollection"
+                        },
+                        "input": {
+                            "key": "=$.queryParams.key",
+                            "body": "=$.body"
+                        },
+                        "output": {
+                            "code": 200,
+                            "data": {
+                                "mapping": {
+                                    "size": "=$.size"
+                                }
+                            }
+                        }
+                    },
+                    "reply": {
+                        "code": 200,
+                        "configureResponseCodes": false,
+                        "message": {}
+                    },
+                    "schemas": {
+                        "reply": {
+                            "data": {
+                                "type": "json",
+                                "value": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"size\":{\"type\":\"number\"}}}",
+                                "fe_metadata": "{\n\t\"size\": 3\n\t\n}\n"
+                            }
+                        },
+                        "output": {
+                            "queryParams": {
+                                "type": "json",
+                                "value": "{\"type\":\"object\",\"properties\":{\"key\":{\"type\":\"string\"}},\"required\":[\"key\"]}",
+                                "fe_metadata": "[{\"parameterName\":\"key\",\"type\":\"string\",\"repeating\":\"\",\"required\":\"true\"}]"
+                            },
+                            "headers": {
+                                "type": "json",
+                                "value": "{\"type\":\"object\",\"properties\":{\"Accept\":{\"type\":\"string\",\"visible\":false},\"Accept-Charset\":{\"type\":\"string\",\"visible\":false},\"Accept-Encoding\":{\"type\":\"string\",\"visible\":false},\"Content-Type\":{\"type\":\"string\",\"visible\":false},\"Content-Length\":{\"type\":\"string\",\"visible\":false},\"Connection\":{\"type\":\"string\",\"visible\":false},\"Cookie\":{\"type\":\"string\",\"visible\":false},\"Pragma\":{\"type\":\"string\",\"visible\":false}},\"required\":[]}",
+                                "fe_metadata": "[{\"parameterName\":\"Accept\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Accept-Charset\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Accept-Encoding\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Content-Type\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Content-Length\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Connection\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Cookie\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false},{\"parameterName\":\"Pragma\",\"type\":\"string\",\"repeating\":\"false\",\"required\":\"false\",\"visible\":false}]"
+                            },
+                            "body": {
+                                "type": "json",
+                                "value": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\"},\"age\":{\"type\":\"string\"},\"eyecolor\":{\"type\":\"string\"}}}",
+                                "fe_metadata": "{\n\t\"name\": \"walter\",\n\t\"age\": \"45\",\n\t\"eyecolor\": \"blue\"\n\t\n}\n"
+                            }
+                        }
+                    }
+                }
+            ]
+        }
+    ],
+    "resources": [
+        {
+            "id": "flow:TestTibCollection",
+            "data": {
+                "name": "TestTibCollection",
+                "description": "",
+                "links": [
+                    {
+                        "id": 1,
+                        "from": "TibcoLegacyCollectionAPI",
+                        "to": "TibcoLegacyCollectionAPI1",
+                        "type": "default"
+                    },
+                    {
+                        "id": 2,
+                        "from": "TibcoLegacyCollectionAPI1",
+                        "to": "TibcoLegacyCollectionAPI2",
+                        "type": "default"
+                    },
+                    {
+                        "id": 3,
+                        "from": "TibcoLegacyCollectionAPI2",
+                        "to": "Mapper",
+                        "type": "default"
+                    },
+                    {
+                        "id": 4,
+                        "from": "Mapper",
+                        "to": "LogMessage",
+                        "type": "default"
+                    },
+                    {
+                        "id": 5,
+                        "from": "LogMessage",
+                        "to": "Return",
+                        "type": "default"
+                    },
+                    {
+                        "id": 6,
+                        "from": "LogMessage",
+                        "to": "TibcoLegacyCollectionAPI3",
+                        "type": "expression",
+                        "value": "$activity[TibcoLegacyCollectionAPI2].size > 10"
+                    },
+                    {
+                        "id": 7,
+                        "from": "TibcoLegacyCollectionAPI3",
+                        "to": "Return1",
+                        "type": "default"
+                    }
+                ],
+                "tasks": [
+                    {
+                        "id": "TibcoLegacyCollectionAPI",
+                        "name": "TibcoLegacyCollectionAPI",
+                        "description": "Tibco Legacy Collection",
+                        "activity": {
+                            "ref": "#tibcollection",
+                            "settings": {
+                                "operation": "append"
+                            },
+                            "input": {
+                                "key": "=$flow.key",
+                                "object": "=$flow.body"
+                            }
+                        }
+                    },
+                    {
+                        "id": "TibcoLegacyCollectionAPI1",
+                        "name": "TibcoLegacyCollectionAPI1",
+                        "description": "Tibco Legacy Collection",
+                        "activity": {
+                            "ref": "#tibcollection",
+                            "settings": {
+                                "operation": "append"
+                            },
+                            "input": {
+                                "key": "=$activity[TibcoLegacyCollectionAPI].key",
+                                "object": "=coerce.toObject(\"{\\\"name\\\":\\\"bil\\\",\\\"age\\\": 99,\\\"eyecolor\\\":\\\"green\\\"}\")"
+                            }
+                        }
+                    },
+                    {
+                        "id": "TibcoLegacyCollectionAPI2",
+                        "name": "TibcoLegacyCollectionAPI2",
+                        "description": "Tibco Legacy Collection",
+                        "activity": {
+                            "ref": "#tibcollection",
+                            "settings": {
+                                "operation": "get"
+                            },
+                            "input": {
+                                "key": "=$flow.key"
+                            }
+                        }
+                    },
+                    {
+                        "id": "Mapper",
+                        "name": "Mapper",
+                        "description": "Mapper Activity",
+                        "activity": {
+                            "ref": "#mapper",
+                            "input": {
+                                "input": {
+                                    "mapping": {
+                                        "@foreach($activity[\"TibcoLegacyCollectionAPI2\"].collection,input)": {
+                                            "=": "$loop"
+                                        }
+                                    }
+                                }
+                            },
+                            "schemas": {
+                                "input": {
+                                    "input": {
+                                        "type": "json",
+                                        "value": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\"},\"age\":{\"type\":\"string\"},\"eyecolor\":{\"type\":\"string\"}}}}",
+                                        "fe_metadata": "[{\n\t\"name\": \"walter\",\n\t\"age\": \"45\",\n\t\"eyecolor\": \"blue\"\n}\n]"
+                                    }
+                                },
+                                "output": {
+                                    "output": {
+                                        "type": "json",
+                                        "value": "{\n  \"$schema\": \"http://json-schema.org/draft-04/schema#\",\n  \"type\": \"array\",\n  \"items\": {\n    \"type\": \"object\",\n    \"properties\": {\n      \"name\": {\n        \"type\": \"string\"\n      },\n      \"age\": {\n        \"type\": \"string\"\n      },\n      \"eyecolor\": {\n        \"type\": \"string\"\n      }\n    }\n  }\n}",
+                                        "fe_metadata": "{\n  \"$schema\": \"http://json-schema.org/draft-04/schema#\",\n  \"type\": \"array\",\n  \"items\": {\n    \"type\": \"object\",\n    \"properties\": {\n      \"name\": {\n        \"type\": \"string\"\n      },\n      \"age\": {\n        \"type\": \"string\"\n      },\n      \"eyecolor\": {\n        \"type\": \"string\"\n      }\n    }\n  }\n}"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "id": "LogMessage",
+                        "name": "LogMessage",
+                        "description": "Simple Log Message Activity",
+                        "settings": {
+                            "iterate": "=$activity[Mapper].output"
+                        },
+                        "type": "iterator",
+                        "activity": {
+                            "ref": "#log",
+                            "input": {
+                                "Log Level": "INFO",
+                                "flowInfo": false,
+                                "message": "=$iteration[value].name"
+                            }
+                        }
+                    },
+                    {
+                        "id": "Return",
+                        "name": "Return",
+                        "description": "Simple Return Activity",
+                        "activity": {
+                            "ref": "#actreturn",
+                            "settings": {
+                                "mappings": {
+                                    "size": "=$activity[TibcoLegacyCollectionAPI1].size"
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "id": "TibcoLegacyCollectionAPI3",
+                        "name": "TibcoLegacyCollectionAPI3",
+                        "description": "Tibco Legacy Collection",
+                        "activity": {
+                            "ref": "#tibcollection",
+                            "settings": {
+                                "operation": "delete"
+                            },
+                            "input": {
+                                "key": "=$flow.key"
+                            }
+                        }
+                    },
+                    {
+                        "id": "Return1",
+                        "name": "Return1",
+                        "description": "Simple Return Activity",
+                        "activity": {
+                            "ref": "#actreturn"
+                        }
+                    }
+                ],
+                "metadata": {
+                    "input": [
+                        {
+                            "name": "headers",
+                            "type": "object",
+                            "schema": {
+                                "type": "json",
+                                "value": "{\"Accept\":{\"type\":\"string\",\"visible\":false},\"Accept-Charset\":{\"type\":\"string\",\"visible\":false},\"Accept-Encoding\":{\"type\":\"string\",\"visible\":false},\"Content-Type\":{\"type\":\"string\",\"visible\":false},\"Content-Length\":{\"type\":\"string\",\"visible\":false},\"Connection\":{\"type\":\"string\",\"visible\":false},\"Cookie\":{\"type\":\"string\",\"visible\":false},\"Pragma\":{\"type\":\"string\",\"visible\":false}}"
+                            }
+                        },
+                        {
+                            "name": "body",
+                            "type": "object",
+                            "schema": {
+                                "type": "json",
+                                "value": "{\"name\":{\"type\":\"string\"},\"age\":{\"type\":\"string\"},\"eyecolor\":{\"type\":\"string\"}}"
+                            }
+                        },
+                        {
+                            "name": "key",
+                            "type": "string"
+                        }
+                    ],
+                    "output": [
+                        {
+                            "name": "code",
+                            "type": "integer"
+                        },
+                        {
+                            "name": "size",
+                            "type": "integer"
+                        }
+                    ],
+                    "fe_metadata": {
+                        "input": "{\"type\":\"object\",\"title\":\"ReceiveHTTPMessage\",\"properties\":{\"headers\":{\"type\":\"object\",\"properties\":{\"Accept\":{\"type\":\"string\",\"visible\":false},\"Accept-Charset\":{\"type\":\"string\",\"visible\":false},\"Accept-Encoding\":{\"type\":\"string\",\"visible\":false},\"Content-Type\":{\"type\":\"string\",\"visible\":false},\"Content-Length\":{\"type\":\"string\",\"visible\":false},\"Connection\":{\"type\":\"string\",\"visible\":false},\"Cookie\":{\"type\":\"string\",\"visible\":false},\"Pragma\":{\"type\":\"string\",\"visible\":false}},\"required\":[]},\"body\":{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\"},\"age\":{\"type\":\"string\"},\"eyecolor\":{\"type\":\"string\"}}},\"key\":{\"type\":\"string\"}}}",
+                        "output": "{\"type\":\"object\",\"title\":\"Inputs\",\"properties\":{\"code\":{\"type\":\"integer\",\"required\":false},\"size\":{\"type\":\"integer\",\"required\":false}},\"required\":[]}"
+                    }
+                },
+                "explicitReply": true
+            }
+        }
+    ],
+    "properties": [],
+    "contrib": "W3sicmVmIjoiZ2l0LnRpYmNvLmNvbS9naXQvcHJvZHVjdC9pcGFhcy93aS1jb250cmliLmdpdC9jb250cmlidXRpb25zL0dlbmVyYWwiLCJzM2xvY2F0aW9uIjoiVGliY28vR2VuZXJhbCJ9LHsicmVmIjoiZ2l0aHViLmNvbS93Y24wMC90aWJjb2xsZWN0aW9uL2FjdGl2aXR5L3RpYmNvbGxlY3Rpb24iLCJzM2xvY2F0aW9uIjoie1VTRVJJRH0vRGVmYXVsdC9hY3Rpdml0eS90aWJjb2xsZWN0aW9uIn1d",
+    "fe_metadata": "UEsDBAoAAAAIADFyHU+rqSRGFQAAABMAAAAIAAAAYXBwLmpzb26rViopykxPTy1yy8kvL1ayio6tBQBQSwECFAAKAAAACAAxch1Pq6kkRhUAAAATAAAACAAAAAAAAAAAAAAAAAAAAAAAYXBwLmpzb25QSwUGAAAAAAEAAQA2AAAAOwAAAAAA"
+}
