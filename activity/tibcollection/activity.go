@@ -49,24 +49,6 @@ func (myActivity *MyActivity) Metadata() *activity.Metadata {
 	return myActivity.metadata
 }
 
-func IsZero(v interface{}) bool {
-	switch reflect.TypeOf(v).Kind() {
-	case reflect.Array, reflect.String:
-		return len(v.([]interface{})) == 0
-	case reflect.Bool:
-		return v.(bool)
-	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
-		return v.(int) == 0
-	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Uintptr:
-		return v.(uint) == 0
-	case reflect.Float32, reflect.Float64:
-		return v.(float32) == 0
-	case reflect.Interface, reflect.Map, reflect.Ptr, reflect.Slice:
-		return false //v.IsNil()
-	}
-	return false
-}
-
 var collectionCacheMutex sync.Mutex
 
 // Eval implements activity.Activity.Eval
