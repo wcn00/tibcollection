@@ -1,4 +1,4 @@
-# fecollection
+# collection
 
 This repo is a collections contribution for Tibco Flogo.
 Its purpose is to allow one to accumulate operations performed during array processing such that they are available after the array is processed and to parent and child flows.
